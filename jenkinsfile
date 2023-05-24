@@ -4,6 +4,10 @@ pipeline {
         label ''
     }
 
+    tools{
+        dockerTool 'docker-cloud'
+    }
+
     triggers {
         githubPush()
     }
