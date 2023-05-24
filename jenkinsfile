@@ -5,7 +5,7 @@ pipeline {
     }
 
     tools{
-        dockerTool 'docker-cloud'
+        dockerTool 'docker'
     }
 
     triggers {
