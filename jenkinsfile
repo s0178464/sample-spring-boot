@@ -1,0 +1,46 @@
+pipeline {
+
+    agent {
+        label 'static-slave'
+    }
+
+    tools {
+        nodejs 'nodejs'
+    }
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+
+        stage('Clean') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Clone Repo') {
+            steps {
+                git branch: 'main', url: 'https://github.com/s0178464/sample-spring-boot'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm ci' //This is for building the nodejs project
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test' //This is for testing the nodejs modules
+            }
+        }
+        stage('Deploy') {
+           steps {
+                sh 'npm install -g forever'
+                sh 'forever start src/index.js'
+           }
+        }
+    }
+}
