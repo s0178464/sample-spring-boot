@@ -1,11 +1,7 @@
 pipeline {
 
     agent {
-        label 'static-slave'
-    }
-
-    tools {
-        nodejs 'nodejs'
+        label ''
     }
 
     triggers {
@@ -27,20 +23,19 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'npm install'
-                sh 'npm ci' //This is for building the nodejs project
+                sh './gradlew build'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm test' //This is for testing the nodejs modules
+                sh './gradlew test'
             }
         }
-        stage('Deploy') {
-           steps {
-                sh 'npm install -g forever'
-                sh 'forever start src/index.js'
-           }
-        }
+        // stage('Deploy') {
+        //    steps {
+        //         sh 'npm install -g forever'
+        //         sh 'forever start src/index.js'
+        //    }
+        // }
     }
 }
