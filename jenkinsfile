@@ -39,3 +39,5 @@ pipeline {
         // }
     }
 }
+
+//this is to test the automatic trigger by a push
