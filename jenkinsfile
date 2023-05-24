@@ -8,6 +8,11 @@ pipeline {
         githubPush()
     }
 
+    environment {
+      DOCKERHUB_CREDENTIALS = credentials('docker-credentials')
+      IMAGE_NAME = 'kolevnikolay87/sample-spring-boot'
+    }
+
     stages {
 
         stage('Clean') {
@@ -37,7 +42,31 @@ pipeline {
         //         sh 'forever start src/index.js'
         //    }
         // }
+
+        stage('Docker login'){
+                steps {
+                sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR  -p $DOCKERHUB_CREDENTIALS_PSW'
+                }
+        }
+
+            stage('Docker build and tag'){
+                steps {
+                    sh 'docker build -t ${IMAGE_NAME} -f Dockerfile .'
+                    sh 'docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${BUILD_NUMBER}'
+                }
+            }
+
+        stage('Docker Push'){
+                steps {
+                sh 'docker push ${IMAGE_NAME}:${BUILD_NUMBER}'
+                }
+            }
+
+        stage('Deploy'){
+                steps {   
+                    sh 'docker container rm -f sample-spring-boot || true'
+                    sh 'docker container run -d -p 4000:3000 --name sample-spring-boot ${IMAGE_NAME}'
+                }
+        }
     }
 }
-
-//this is to test the automatic trigger by a push
